@@ -6,6 +6,9 @@ const booksRouter = express.Router()
 
 booksRouter.post("/", async (req, res, next) => {
   try {
+    const newBook = new BooksModel(req.body)
+    const { _id } = await newBook.save()
+    res.status(201).send({ _id })
   } catch (error) {
     next(error)
   }
@@ -28,6 +31,8 @@ booksRouter.get("/", async (req, res, next) => {
 
 booksRouter.get("/:bookId", async (req, res, next) => {
   try {
+    const book = await BooksModel.findById(req.params.bookId).populate({ path: "authors", select: "firstName lastName" })
+    res.send(book)
   } catch (error) {
     next(error)
   }
